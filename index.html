@@ -221,6 +221,13 @@ const affirmations = [
 
 let currentAffirmation = 0;
 
+// Load bee cat image
+const beeCatImg = new Image();
+beeCatImg.src = '/mnt/user-data/uploads/beecat.png';
+
+// Bee cat pulse animation
+let beeCatPulse = 0;
+
 // Sparkle particles
 let sparkles = [];
 
@@ -293,6 +300,21 @@ function updateCanvas() {
     sparkle.update();
     sparkle.draw();
   });
+  
+  // Draw bee cat in top left with pulse
+  if (beeCatImg.complete) {
+    beeCatPulse += 0.05;
+    const pulseScale = 1 + Math.sin(beeCatPulse) * 0.1;
+    const beeCatSize = 120;
+    const beeCatX = 40;
+    const beeCatY = 40;
+    
+    ctx.save();
+    ctx.translate(beeCatX + beeCatSize/2, beeCatY + beeCatSize/2);
+    ctx.scale(pulseScale, pulseScale);
+    ctx.drawImage(beeCatImg, -beeCatSize/2, -beeCatSize/2, beeCatSize, beeCatSize);
+    ctx.restore();
+  }
   
   // Draw title at top
   ctx.save();
