@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You Cat God 🐱</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Courier New', monospace;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  #container {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  #video {
+    display: none;
+  }
+
+  #canvas {
+    width: 100%;
+    height: auto;
+    border: 4px solid #ff00ff;
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+    image-rendering: pixelated;
+  }
+
+  #affirmation {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #00ff00;
+    padding: 20px 40px;
+    font-size: 24px;
+    text-align: center;
+    border: 3px solid #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+    animation: glow 2s ease-in-out infinite;
+    max-width: 90%;
+    z-index: 10;
+  }
+
+  @keyframes glow {
+    0%, 100% { 
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      border-color: #00ff00;
+    }
+    50% { 
+      box-shadow: 0 0 40px rgba(0, 255, 0, 0.8);
+      border-color: #00ffaa;
+    }
+  }
+
+  #title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ff00ff;
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 0 0 20px #ff00ff, 2px 2px 0 #000;
+    z-index: 10;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.05); }
+  }
+
+  #controls {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  button {
+    background: #ff00ff;
+    color: #000;
+    border: 2px solid #000;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  button:hover {
+    background: #00ff00;
+    transform: scale(1.05);
+  }
+
+  #startScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    color: #fff;
+  }
+
+  #startScreen h1 {
+    font-size: 48px;
+    color: #ff00ff;
+    text-shadow: 0 0 30px #ff00ff;
+    margin-bottom: 20px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  #startScreen p {
+    font-size: 20px;
+    color: #00ff00;
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px #00ff00;
+  }
+
+  #startBtn {
+    font-size: 24px;
+    padding: 20px 40px;
+    background: #ff00ff;
+    color: #000;
+    border: 4px solid #000;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+
+  #startBtn:hover {
+    background: #00ff00;
+    transform: scale(1.1);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* CRT scanline effect */
+  #container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15) 0px,
+      transparent 2px,
+      transparent 4px
+    );
+    pointer-events: none;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <h1>🐱 THANK YOU CAT GOD 🐱</h1>
+  <p>Based Cat Affirmations Await</p>
+  <button id="startBtn">ENTER</button>
+</div>
+
+<div id="container" class="hidden">
+  <div id="title">🐱 THANK YOU CAT GOD 🐱</div>
+  <video id="video" width="640" height="480" autoplay></video>
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <div id="affirmation">Anything is pawsible</div>
+  <div id="controls">
+    <button id="saveBtn">📸 Save</button>
+    <button id="newAffirmBtn">✨ New Affirmation</button>
+  </div>
+</div>
+
+<script>
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const affirmationEl = document.getElementById('affirmation');
+const startScreen = document.getElementById('startScreen');
+const container = document.getElementById('container');
+const startBtn = document.getElementById('startBtn');
+const saveBtn = document.getElementById('saveBtn');
+const newAffirmBtn = document.getElementById('newAffirmBtn');
+
+const affirmations = [
+  "Anything is pawsible",
+  "You're purrfect as you are",
+  "Meow is the time",
+  "Stay curious, stay based",
+  "Nine lives, infinite potential",
+  "Trust the purrcess",
+  "You're one in a meowllion",
+  "Fur real, you got this",
+  "Paws and reflect on your greatness",
+  "Life is meow or never",
+  "You're the cat's whiskers",
+  "Feline good, feline blessed",
+  "Purrsistence pays off",
+  "You're im-paws-ibly amazing",
+  "Catitude is everything"
+];
+
+let currentAffirmation = 0;
+
+// Pixel cat face data (simple 16x16 pixel art)
+const catFace = [
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0],
+  [0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0],
+  [0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0],
+  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
+  [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
+  [0,0,1,1,1,2,2,1,1,2,2,1,1,1,0,0],
+  [0,0,1,1,1,2,2,1,1,2,2,1,1,1,0,0],
+  [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+  [0,0,1,1,3,1,1,1,1,1,1,3,1,1,0,0],
+  [0,0,1,1,1,3,3,3,3,3,3,1,1,1,0,0],
+  [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
+  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+];
+
+const colors = {
+  0: null, // transparent
+  1: '#ff66ff', // pink base
+  2: '#000000', // eyes
+  3: '#ff00ff'  // mouth/details
+};
+
+function drawPixelCatFace(x, y, size) {
+  const pixelSize = size / 16;
+  
+  for (let row = 0; row < 16; row++) {
+    for (let col = 0; col < 16; col++) {
+      const pixel = catFace[row][col];
+      if (pixel !== 0) {
+        ctx.fillStyle = colors[pixel];
+        ctx.fillRect(
+          x + col * pixelSize,
+          y + row * pixelSize,
+          pixelSize,
+          pixelSize
+        );
+      }
+    }
+  }
+}
+
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      video: { 
+        width: 640, 
+        height: 480 
+      } 
+    });
+    video.srcObject = stream;
+    video.play();
+    requestAnimationFrame(updateCanvas);
+  } catch (err) {
+    alert('Camera access denied. Please allow camera access to use TYCG Mirror!');
+    console.error('Camera error:', err);
+  }
+}
+
+function updateCanvas() {
+  // Draw mirrored video
+  ctx.save();
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+  ctx.restore();
+  
+  // Add retro effect overlay
+  ctx.fillStyle = 'rgba(255, 0, 255, 0.03)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw pixel cat face overlay (centered on face area)
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2 - 40;
+  const catSize = 200;
+  
+  drawPixelCatFace(centerX - catSize/2, centerY - catSize/2, catSize);
+  
+  requestAnimationFrame(updateCanvas);
+}
+
+function changeAffirmation() {
+  currentAffirmation = (currentAffirmation + 1) % affirmations.length;
+  affirmationEl.textContent = affirmations[currentAffirmation];
+}
+
+function saveImage() {
+  const link = document.createElement('a');
+  link.download = `tycg-${Date.now()}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+// Auto-rotate affirmations
+setInterval(changeAffirmation, 5000);
+
+// Event listeners
+startBtn.addEventListener('click', () => {
+  startScreen.classList.add('hidden');
+  container.classList.remove('hidden');
+  startCamera();
+});
+
+saveBtn.addEventListener('click', saveImage);
+newAffirmBtn.addEventListener('click', changeAffirmation);
+
+// Random starting affirmation
+currentAffirmation = Math.floor(Math.random() * affirmations.length);
+affirmationEl.textContent = affirmations[currentAffirmation];
+</script>
+
+</body>
+</html>
