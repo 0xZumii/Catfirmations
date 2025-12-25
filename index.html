@@ -181,8 +181,8 @@
 
 <div id="container" class="hidden">
   <div id="title">🐱 THANK YOU CAT GOD 🐱</div>
-  <video id="video" width="1280" height="720" autoplay></video>
-  <canvas id="canvas" width="1280" height="720"></canvas>
+  <video id="video" width="1280" height="960" autoplay></video>
+  <canvas id="canvas" width="1280" height="960"></canvas>
   <div id="affirmation">Anything is pawsible</div>
   <div id="controls">
     <button id="saveBtn">📸 Save</button>
@@ -272,7 +272,7 @@ async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia({ 
       video: { 
         width: 1280, 
-        height: 720 
+        height: 960 
       } 
     });
     video.srcObject = stream;
